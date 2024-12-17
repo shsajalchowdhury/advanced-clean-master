@@ -1,0 +1,343 @@
+/* General Styles */
+.wp-clean-master-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 2.5em;
+    color: #4CAF50;
+    margin: 0;
+}
+
+.header p {
+    font-size: 1.2em;
+    color: #666;
+    margin: 10px 0 0;
+}
+
+.space-saved {
+    text-align: center;
+    margin: 20px 0;
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    color: #4CAF50;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Features Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.feature {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.feature img {
+    max-width: 60px;
+    margin-bottom: 10px;
+}
+
+.feature h2 {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.feature p {
+    font-size: 0.95em;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+button.clean-now-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+button.clean-now-btn:hover {
+    background-color: #45a049;
+}
+
+button.clean-now-btn[disabled] {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* Spinner for Loading */
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Scheduled Cleanup Section */
+.scheduled-cleanup {
+    margin-top: 30px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.scheduled-cleanup h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Card Styles */
+.card-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 15px 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+.setting {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cleanup-label {
+    font-size: 1.1em;
+    color: #333;
+    display: inline-block;
+    margin: 0;
+}
+
+/* Summary Text */
+.summary {
+    font-size: 0.95em;
+    color: #555;
+    margin-top: 5px;
+}
+
+/* Toggle Switch Styling */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 25px;
+    transition: background-color 0.3s;
+}
+
+.toggle-switch .slider:before {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 3.5px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.toggle-switch input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+.toggle-switch input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+
+/* Responsive Behavior */
+@media (max-width: 768px) {
+    .card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .setting {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .summary {
+        margin-top: 10px;
+    }
+}
+
+
+/* Toggle Switch Styling */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 25px;
+    transition: 0.4s;
+}
+
+.toggle-switch .slider:before {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    bottom: 3.5px;
+    left: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+.toggle-switch input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+.toggle-switch input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* Responsive Behavior */
+@media (max-width: 768px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .setting {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .summary {
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Cleanup Logs Section */
+.cleanup-logs {
+    margin-top: 30px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.cleanup-logs h2 {
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.cleanup-logs table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.cleanup-logs th,
+.cleanup-logs td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.cleanup-logs th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.cleanup-logs tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.cleanup-logs tr:hover {
+    background-color: #f1f1f1;
+}
