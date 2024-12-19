@@ -35,8 +35,8 @@ class WP_Clean_Master {
      * Enqueue Admin Assets (CSS & JS)
      */
     public function enqueue_assets() {
-        wp_enqueue_style( 'wp-clean-master-styles', WP_CLEAN_MASTER_URL . 'assets/css/styles.css' );
-        wp_enqueue_script( 'wp-clean-master-js', WP_CLEAN_MASTER_URL . 'assets/js/main.js', array( 'jquery' ), null, true );
+        wp_enqueue_style( 'wp-clean-master-styles', WP_CLEAN_MASTER_URL . 'assets/css/styles.css', array(), '1.0.0' );
+        wp_enqueue_script( 'wp-clean-master-js', WP_CLEAN_MASTER_URL . 'assets/js/main.js', array( 'jquery' ), '1.0.0', true );
         wp_localize_script( 'wp-clean-master-js', 'cleanupMasterAjax', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'nonce'    => wp_create_nonce( 'cleanup_action_nonce' ),
@@ -188,7 +188,7 @@ class WP_Clean_Master {
         $cache_key = 'orphaned_media_ids';
         $attachments = wp_cache_get( $cache_key );
 
-    if ( false === $attachments ) {
+        if ( false === $attachments ) {
             // Use get_posts() instead of direct SQL query
             $attachments = get_posts( array(
                 'post_type'   => 'attachment',
@@ -197,60 +197,68 @@ class WP_Clean_Master {
                 'numberposts' => -1,
             ) );
 
-        // Cache the results to avoid redundant queries
-         wp_cache_set( $cache_key, $attachments );
-    }
+            // Cache the results to avoid redundant queries
+            wp_cache_set( $cache_key, $attachments );
+        }
 
         if ( empty( $attachments ) ) {
             return 0;
-    }
+        }
 
-    // Ensure all attachment IDs are integers
+        // Ensure all attachment IDs are integers
         $attachments = array_map( 'intval', $attachments );
 
         // Used attachments in content
         $used_in_content_cache_key = 'used_in_content_ids';
         $used_in_content = wp_cache_get( $used_in_content_cache_key );
 
-    if ( false === $used_in_content ) {
-        $used_in_content = array();
+        if ( false === $used_in_content ) {
+            $used_in_content = array();
 
-        // Search for attachments in post content
-        foreach ( $attachments as $attachment_id ) {
-            $file = esc_sql( get_post_meta( $attachment_id, '_wp_attached_file', true ) );
+            // Search for attachments in post content
+            foreach ( $attachments as $attachment_id ) {
+                $file = esc_sql( get_post_meta( $attachment_id, '_wp_attached_file', true ) );
 
-            if ( ! empty( $file ) ) {
-                $query = new WP_Query( array(
-                    's'           => $file,
-                    'post_type'   => 'any',
-                    'fields'      => 'ids',
-                    'numberposts' => -1,
-                ) );
+                if ( ! empty( $file ) ) {
+                    $query = new WP_Query( array(
+                        's'           => $file,
+                        'post_type'   => 'any',
+                        'fields'      => 'ids',
+                        'numberposts' => -1,
+                    ) );
 
-                $used_in_content = array_merge( $used_in_content, $query->posts );
+                    if ( ! empty( $query->posts ) ) {
+                        $used_in_content[] = $attachment_id;
+                    }
+                }
             }
-        }
 
-        // Cache the result
-        wp_cache_set( $used_in_content_cache_key, $used_in_content );
-    }
+            // Cache the result
+            wp_cache_set( $used_in_content_cache_key, $used_in_content );
+        }
 
         // Used attachments as featured images
         $used_as_featured_cache_key = 'used_as_featured_ids';
         $used_as_featured = wp_cache_get( $used_as_featured_cache_key );
 
-    if ( false === $used_as_featured ) {
-        $used_as_featured = get_posts( array(
-            'post_type'   => 'any',
-            'meta_key'    => '_thumbnail_id',
-            'meta_value'  => $attachments,
-            'fields'      => 'ids',
-            'numberposts' => -1,
-        ) );
+        if ( false === $used_as_featured ) {
+            $used_as_featured = get_posts( array(
+                'post_type'   => 'any',
+                'meta_query'  => array(
+                    array(
+                        'key'     => '_thumbnail_id',
+                        'value'   => $attachments,
+                        'compare' => 'IN',
+                    ),
+                ),
+                'fields'      => 'ids',
+                'numberposts' => -1,
+                'no_found_rows' => true, // Optimize query
+            ) );
 
-        // Cache the result
-        wp_cache_set( $used_as_featured_cache_key, $used_as_featured );
-    }
+            // Cache the result
+            wp_cache_set( $used_as_featured_cache_key, $used_as_featured );
+        }
 
         // Merge all used attachments and ensure IDs are integers
         $used_attachments = array_map( 'intval', array_unique( array_merge( $used_in_content, $used_as_featured ) ) );
@@ -258,15 +266,19 @@ class WP_Clean_Master {
         // Find orphaned attachments
         $orphaned_attachments = array_diff( $attachments, $used_attachments );
 
-        // // Delete orphaned attachments
-        foreach ( $orphaned_attachments as $attachment_id ) {
-            wp_delete_attachment( $attachment_id, true );
+        // Delete only the counted orphaned attachments
+        $deleted_count = 0;
+        if ( ! empty( $orphaned_attachments ) ) {
+            foreach ( $orphaned_attachments as $attachment_id ) {
+                if ( get_post_type( $attachment_id ) === 'attachment' ) { // Verify it's an attachment
+                    wp_delete_attachment( $attachment_id, true );
+                    $deleted_count++;
+                }
+            }
         }
 
-        return count( $orphaned_attachments );
+        return $deleted_count;
     }
-
-
 
     private function clean_post_revisions() {
         return $this->delete_posts_by_status( 'revision' );
@@ -347,6 +359,7 @@ class WP_Clean_Master {
                     'post_type'   => 'any',
                     'fields'      => 'ids',
                     'numberposts' => -1,
+                    'no_found_rows' => true, // Optimize query
                 ) );
     
                 if ( ! empty( $query->posts ) ) {
@@ -361,10 +374,16 @@ class WP_Clean_Master {
         // Step 3: Find attachments used as featured images
         $used_as_featured = get_posts( array(
             'post_type'   => 'any',
-            'meta_key'    => '_thumbnail_id',
-            'meta_value'  => $attachments,
+            'meta_query'  => array(
+                array(
+                    'key'     => '_thumbnail_id',
+                    'value'   => $attachments,
+                    'compare' => 'IN',
+                ),
+            ),
             'fields'      => 'meta_value',
             'numberposts' => -1,
+            'no_found_rows' => true, // Optimize query
         ) );
     
         // Fix: Handle cases where objects might appear in the arrays
@@ -386,11 +405,6 @@ class WP_Clean_Master {
         $orphaned_media_count = count( $orphaned_attachments );
         wp_cache_set( $cache_key, $orphaned_media_count );
     
-        // Step 5: Optional - Delete orphaned attachments
-        // foreach ( $orphaned_attachments as $attachment_id ) {
-        //     wp_delete_attachment( $attachment_id, true );
-        // }
-    
         return $orphaned_media_count;
     }
     
@@ -400,53 +414,107 @@ class WP_Clean_Master {
  * Get Count of Expired Transients
  */
     private function get_transient_count() {
+        // Define a cache key
+        $cache_key = 'expired_transient_count';
+
+        // Attempt to retrieve the count from the cache
+        $cached_count = wp_cache_get( $cache_key );
+        if ( false !== $cached_count ) {
+            return (int) $cached_count;
+        }
+
         global $wpdb;
-        // Ensure proper transient timeout table query
-        $count = $wpdb->get_var( 
-        $wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %d", 
-            '_transient_timeout_%', time()
-        ) 
-    );
-    return $count ? (int) $count : 0;
+
+        // Query to count expired transients
+        $count = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %d",
+                '_transient_timeout_%',
+                time()
+            )
+        );
+
+        // Cache the count for 1 hour (3600 seconds)
+        wp_cache_set( $cache_key, $count, '', 3600 );
+
+        return $count ? (int) $count : 0;
     }
+
 
     /**
  * Clean Expired Transients
  */
-private function clean_transients() {
-    global $wpdb;
+    private function clean_transients() {
+        global $wpdb;
 
-    // Define placeholders and values for the first query
-    $query = $wpdb->prepare(
-        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %d",
-        '_transient_timeout_%',
-        time()
-    );
-    $deleted_timeouts = $wpdb->query( $query ); // Execute query securely
+        // Cache keys for results
+        $cache_key_timeouts = 'deleted_transient_timeouts';
+        $cache_key_values = 'deleted_transient_values';
 
-    // Define placeholders and values for the second query
-    $query_values = $wpdb->prepare(
-        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name NOT LIKE %s",
-        '_transient_%',
-        '_transient_timeout_%'
-    );
-    $deleted_values = $wpdb->query( $query_values ); // Execute query securely
+        // Initialize counters
+        $deleted_timeouts = wp_cache_get( $cache_key_timeouts );
+        $deleted_values = wp_cache_get( $cache_key_values );
 
-    // Return the total number of deleted transients
-    return (int) ( $deleted_timeouts + $deleted_values );
-}
+        if ( false === $deleted_timeouts ) {
+            // Use wp_delete_expired_transients() instead of direct query
+            $deleted_timeouts = wp_delete_expired_transients();
+
+            // Cache the result
+            wp_cache_set( $cache_key_timeouts, $deleted_timeouts, '', 3600 ); // Cache for 1 hour
+        }
+
+        if ( false === $deleted_values ) {
+            // Use wp_delete_expired_transients() instead of direct query
+            $deleted_values = wp_delete_expired_transients();
+
+            // Cache the result
+            wp_cache_set( $cache_key_values, $deleted_values, '', 3600 ); // Cache for 1 hour
+        }
+
+        // Return the total number of deleted transients
+        return (int) ( $deleted_timeouts + $deleted_values );
+    }
+
 
 
 
     private function insert_cleanup_log( $action, $count ) {
+        // Cache key to prevent duplicate inserts
+        $cache_key = 'insert_cleanup_log_' . md5( $action . $count );
+
+        // Check if this log entry already exists in cache
+        if ( wp_cache_get( $cache_key ) ) {
+            return;
+        }
+
         global $wpdb;
-        $wpdb->insert( $wpdb->prefix . 'clean_master_logs', array(
-            'cleanup_type'  => sanitize_text_field( $action ),
-            'cleaned_count' => absint( $count ),
-            'cleaned_on'    => current_time( 'mysql' ),
-        ) );
+
+        // Sanitize inputs
+        $cleanup_type = sanitize_text_field( $action );
+        $cleaned_count = absint( $count );
+        $cleaned_on = current_time( 'mysql' );
+
+        // Insert the log into the database
+        $wpdb->insert(
+            $wpdb->prefix . 'clean_master_logs',
+            array(
+                'cleanup_type'  => $cleanup_type,
+                'cleaned_count' => $cleaned_count,
+                'cleaned_on'    => $cleaned_on,
+            ),
+            array(
+                '%s', // Data type for 'cleanup_type'
+                '%d', // Data type for 'cleaned_count'
+                '%s', // Data type for 'cleaned_on'
+            )
+        );
+
+        // Cache the action to prevent duplicate inserts
+        wp_cache_set( $cache_key, true, '', 3600 ); // Cache for 1 hour
     }
+
+
+
 
 /**
  * Calculate Total Space Saved
@@ -455,30 +523,54 @@ private function clean_transients() {
         global $wpdb;
 
         // Step 1: Fetch total space saved from cleanup logs
-        $total_space_saved = (int) get_option( 'wp_clean_master_total_space_saved', 0 );
+        $cache_key = 'wp_clean_master_total_space_saved';
+        $total_space_saved = wp_cache_get( $cache_key );
 
-        // Step 2: Calculate orphaned media space saved
-        $orphaned_media_space = 0;
-        $media_ids = $wpdb->get_col(
-        "SELECT meta_value FROM {$wpdb->postmeta} 
-         WHERE meta_key = '_wp_attached_file' 
-         AND post_id IN (SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_parent = 0)"
-        );
+        if ( false === $total_space_saved ) {
+            $total_space_saved = (int) get_option( 'wp_clean_master_total_space_saved', 0 );
 
-        foreach ( $media_ids as $file ) {
-        $file_path = wp_get_upload_dir()['basedir'] . '/' . $file;
-        if ( file_exists( $file_path ) ) {
-            $orphaned_media_space += filesize( $file_path );
+            // Step 2: Calculate orphaned media space saved
+            $orphaned_media_space = 0;
+
+            // Use get_posts() instead of direct query
+            $media_ids = get_posts( array(
+                'post_type'   => 'attachment',
+                'post_parent' => 0,
+                'fields'      => 'ids',
+                'numberposts' => -1,
+            ) );
+
+            foreach ( $media_ids as $attachment_id ) {
+                $file = get_post_meta( $attachment_id, '_wp_attached_file', true );
+                $file_path = wp_get_upload_dir()['basedir'] . '/' . $file;
+                if ( file_exists( $file_path ) ) {
+                    $orphaned_media_space += filesize( $file_path );
+                }
+            }
+
+            // Add orphaned media space saved to total space saved
+            $total_space_saved += $orphaned_media_space;
+
+            // Step 3: Save the updated value to the database and cache
+            update_option( 'wp_clean_master_total_space_saved', $total_space_saved );
+            wp_cache_set( $cache_key, $total_space_saved, '', 3600 ); // Cache for 1 hour
         }
-        }
-
-        // Add orphaned media space saved to total space saved
-        $total_space_saved += $orphaned_media_space;
-
-        // Step 3: Save the updated value to the database
-        update_option( 'wp_clean_master_total_space_saved', $total_space_saved );
 
         return $total_space_saved; // Return space in bytes
+    }
+
+    /**
+     * Run Scheduled Cleanup
+     */
+    public function run_scheduled_cleanup() {
+        // Perform cleanup actions
+        $this->clean_drafts();
+        $this->clean_trashed_posts();
+        $this->clean_unapproved_comments();
+        $this->clean_orphaned_media();
+        $this->clean_post_revisions();
+        $this->clean_transients();
+        $this->clean_spam_comments();
     }
 
 }
