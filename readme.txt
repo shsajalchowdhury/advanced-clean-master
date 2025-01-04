@@ -9,12 +9,11 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-🧹 **The Ultimate WordPress Cleanup and Optimization Tool** 🚀  
-Remove unused drafts, spam comments, orphaned media, and optimize your database effortlessly!
+🌟 **WP Clean Master** optimizes your WordPress site by cleaning drafts, orphaned media, expired transients, and more. Schedule cleanups easily
 
 == Description ==
 
-🌟 **WP Clean Master** optimizes your WordPress site by cleaning drafts, orphaned media, expired transients, and more. Schedule cleanups easily
+🌟 **WP Clean Master** is a comprehensive WordPress plugin designed to optimize and maintain your website. It cleans unused drafts, trashed posts, unapproved and spam comments, and orphaned media files not linked to any content. The plugin also helps optimize your database by removing expired transients and old post revisions. With the option to schedule automatic cleanups on a daily or weekly basis, WP Clean Master keeps your site clutter-free. Logs are available to track cleanup activities, and the modern, responsive admin dashboard provides real-time stats for better site management.
 
 💡 **Why Choose WP Clean Master?**  
 - 🧹 Clean unused drafts and trashed posts.  
