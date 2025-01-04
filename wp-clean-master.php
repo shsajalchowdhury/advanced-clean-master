@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Simple Cleanup Tool
+Plugin Name: Clean Master
 Description: A plugin to clean and optimize your WordPress site by removing drafts, trashed posts, orphaned media, and more.
 Version: 1.0.0
 Author: SH Sajal Chowdhury
