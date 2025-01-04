@@ -27,7 +27,7 @@ class WP_Clean_Master {
             'wp-clean-master',
             array( $this, 'cleanup_tool_page' ),
             'dashicons-trash',
-            90
+            25
         );
     }
 
@@ -242,6 +242,7 @@ class WP_Clean_Master {
         $used_as_featured = wp_cache_get( $used_as_featured_cache_key );
 
         if ( false === $used_as_featured ) {
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- meta_query is necessary for retrieving posts with specific metadata.
             $used_as_featured = get_posts( array(
                 'post_type'   => 'any',
                 'meta_query'  => array(
@@ -255,10 +256,10 @@ class WP_Clean_Master {
                 'numberposts' => -1,
                 'no_found_rows' => true, // Optimize query
             ) );
-
+        
             // Cache the result
             wp_cache_set( $used_as_featured_cache_key, $used_as_featured );
-        }
+        }        
 
         // Merge all used attachments and ensure IDs are integers
         $used_attachments = array_map( 'intval', array_unique( array_merge( $used_in_content, $used_as_featured ) ) );
@@ -373,6 +374,7 @@ class WP_Clean_Master {
     
         // Step 3: Find attachments used as featured images
         $used_as_featured = get_posts( array(
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- meta_query is necessary for retrieving posts with specific metadata.
             'post_type'   => 'any',
             'meta_query'  => array(
                 array(
@@ -426,6 +428,7 @@ class WP_Clean_Master {
         global $wpdb;
 
         // Query to count expired transients
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         $count = $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %d",
@@ -495,7 +498,8 @@ class WP_Clean_Master {
         $cleaned_on = current_time( 'mysql' );
 
         // Insert the log into the database
-        $wpdb->insert(
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $wpdb->insert(
             $wpdb->prefix . 'clean_master_logs',
             array(
                 'cleanup_type'  => $cleanup_type,

@@ -17,7 +17,7 @@
         <!-- Clean Drafts -->
         <div class="feature">
             <div class="icon">
-                <?php echo wp_get_attachment_image( attachment_url_to_postid( plugin_dir_url( __FILE__ ) . 'assets/icons/drafts.svg' ), 'full', false, array( 'alt' => 'Clean Drafts' ) ); ?>
+                <img src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/icons/drafts.svg' ); ?>" alt="Clean Drafts">
             </div>
             <h2>Clean Drafts (<?php echo intval( $stats['drafts'] ); ?>)</h2>
             <p>Remove unused or outdated draft posts and pages.</p>
@@ -33,7 +33,7 @@
         <!-- Clean Trashed Posts -->
         <div class="feature">
             <div class="icon">
-                <?php echo wp_get_attachment_image( attachment_url_to_postid( plugin_dir_url( __FILE__ ) . 'assets/icons/trashed-post.svg' ), 'full', false, array( 'alt' => 'Clean Trashed Posts' ) ); ?>
+                <img src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/icons/trashed-post.svg' ); ?>" alt="Clean Trashed Posts">
             </div>
             <h2>Clean Trashed Posts (<?php echo intval( $stats['trashed'] ); ?>)</h2>
             <p>Delete posts and pages that are still in the trash.</p>
@@ -49,7 +49,7 @@
         <!-- Clean Unapproved Comments -->
         <div class="feature">
             <div class="icon">
-                <?php echo wp_get_attachment_image( attachment_url_to_postid( plugin_dir_url( __FILE__ ) . 'assets/icons/comments.svg' ), 'full', false, array( 'alt' => 'Clean Unapproved Comments' ) ); ?>
+                <img src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/icons/comments.svg' ); ?>" alt="Clean Unapproved Comments">
             </div>
             <h2>Clean Unapproved Comments (<?php echo intval( $stats['unapproved_comments'] ); ?>)</h2>
             <p>Remove unapproved comments to reduce database bloat.</p>
@@ -65,7 +65,7 @@
         <!-- Clean Orphaned Media -->
         <div class="feature">
             <div class="icon">
-                <?php echo wp_get_attachment_image( attachment_url_to_postid( plugin_dir_url( __FILE__ ) . 'assets/icons/orphaned-media.svg' ), 'full', false, array( 'alt' => 'Clean Orphaned Media' ) ); ?>
+                <img src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/icons/orphaned-media.svg' ); ?>" alt="Clean Orphaned Media">
             </div>
             <h2>Clean Orphaned Media (<?php echo intval( $stats['orphaned_media'] ); ?>)</h2>
             <p>Delete unused media files that are not linked to content.</p>
@@ -81,7 +81,7 @@
         <!-- Clean Post Revisions -->
         <div class="feature">
             <div class="icon">
-                <?php echo wp_get_attachment_image( attachment_url_to_postid( plugin_dir_url( __FILE__ ) . 'assets/icons/revisions.svg' ), 'full', false, array( 'alt' => 'Clean Post Revisions' ) ); ?>
+                <img src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/icons/revisions.svg' ); ?>" alt="Clean Post Revisions">
             </div>
             <h2>Clean Post Revisions (<?php echo intval( $stats['post_revisions'] ); ?>)</h2>
             <p>Remove old revisions to optimize your database.</p>
@@ -97,7 +97,7 @@
         <!-- Clean Transients -->
         <div class="feature">
             <div class="icon">
-                <?php echo wp_get_attachment_image( attachment_url_to_postid( plugin_dir_url( __FILE__ ) . 'assets/icons/transients.svg' ), 'full', false, array( 'alt' => 'Clean Transients' ) ); ?>
+                <img src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/icons/transients.svg' ); ?>" alt="Clean Transients">
             </div>
             <h2>Clean Transients (<?php echo intval( $stats['transients'] ); ?>)</h2>
             <p>Clear expired or unused transients to reduce database clutter.</p>
@@ -113,7 +113,7 @@
         <!-- Clean Spam Comments -->
         <div class="feature">
             <div class="icon">
-                <?php echo wp_get_attachment_image( attachment_url_to_postid( plugin_dir_url( __FILE__ ) . 'assets/icons/spam.svg' ), 'full', false, array( 'alt' => 'Clean Spam Comments' ) ); ?>
+                <img src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/icons/spam.svg' ); ?>" alt="Clean Spam Comments">
             </div>
             <h2>Clean Spam Comments (<?php echo intval( $stats['spam_comments'] ); ?>)</h2>
             <p>Delete spam comments detected by Akismet or other filters.</p>
@@ -180,22 +180,22 @@
                 // Try to retrieve cached results
                 $logs = wp_cache_get($cache_key);
 
-                if ($logs === false) {
+                if ( $logs === false ) {
                     // Cache miss: Perform the database query
-
-                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                    $query = $wpdb->prepare(
-                        "SELECT * FROM {$wpdb->prefix}clean_master_logs ORDER BY cleaned_on DESC LIMIT %d",
-                        10
+                
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query is necessary for retrieving logs, and caching is implemented below.
+                    $logs = $wpdb->get_results(
+                        $wpdb->prepare(
+                            "SELECT * FROM {$wpdb->prefix}clean_master_logs ORDER BY cleaned_on DESC LIMIT %d",
+                            10
+                        )
                     );
-
-                    $logs = $wpdb->get_results($query);
-
+                
                     // Cache the results if logs are found
-                    if (!empty($logs)) {
-                        wp_cache_set($cache_key, $logs, '', 3600); // Cache for 1 hour
+                    if ( ! empty( $logs ) ) {
+                        wp_cache_set( $cache_key, $logs, '', 3600 ); // Cache for 1 hour
                     }
-                }
+                }                      
 
                 // Output the logs in a table
                 if (!empty($logs)) {

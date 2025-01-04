@@ -1,67 +1,99 @@
 === WP Clean Master ===
-Contributors: shsajalchowdhury  
-Tags: cleanup, clean drafts, clean media, optimize database,scheduled cleanup  
-Requires at least: 5.5  
-Tested up to: 6.7.1  
-Requires PHP: 7.4  
-Stable tag: 1.0.0  
-License: GPLv2 or later  
-License URI: https://www.gnu.org/licenses/gpl-2.0.html  
+Contributors: shsajalchowdhury
+Donate link: buymeacoffee.com/shsajalchowdhury
+Tags: cleanup, clean up, optimize database,optimize,postmeta 
+Requires at least: 5.0
+Tested up to: 6.4
+Requires PHP: 7.2
+Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+🧹 **The Ultimate WordPress Cleanup and Optimization Tool** 🚀  
+Remove unused drafts, spam comments, orphaned media, and optimize your database effortlessly!
 
 == Description ==
 
-WP Clean Master is a powerful tool that helps you **clean up your WordPress site** by removing unused drafts, trashed posts, unapproved comments, orphaned media files, post revisions, expired transients, and spam comments. It also allows for **scheduled cleanup** to keep your database optimized automatically.
+🌟 **WP Clean Master** is your all-in-one solution to keep your WordPress site clutter-free, fast, and optimized. Whether it's cleaning unused drafts, removing orphaned media files, or clearing expired transients, this plugin does it all with ease. Enjoy a clean, modern dashboard and schedule automated cleanups to ensure your website stays in top condition.
 
-**Key Features:**
-- Clean unused drafts and trashed posts.
-- Remove unapproved and spam comments.
-- Delete orphaned media files not linked to any content.
-- Optimize your database by clearing expired transients and post revisions.
-- Schedule automatic daily or weekly cleanups.
-- Logs to track cleanup activities.
-- Modern and responsive admin dashboard with real-time stats.
+💡 **Why Choose WP Clean Master?**  
+- 🧹 Clean unused drafts and trashed posts.  
+- 🗑️ Remove unapproved and spam comments.  
+- 🖼️ Delete orphaned media files not linked to any content.  
+- ⚡ Optimize your database by clearing expired transients and post revisions.  
+- ⏰ Schedule automatic daily or weekly cleanups.  
+- 📋 Logs to track cleanup activities.  
+- 📊 Modern and responsive admin dashboard with real-time stats.
+
+**Boost your website’s speed and performance with WP Clean Master!**
+
+== Features ==
+
+✅ **Powerful Cleanup Tools**  
+- Clean unused drafts, trashed posts, and spam/unapproved comments.  
+- Delete orphaned media files to save storage space.  
+- Optimize your database for better performance.
+
+⏰ **Automatic Scheduling**  
+- Set up daily or weekly cleanup schedules for hands-free optimization.
+
+📋 **Activity Logs**  
+- View detailed logs of all cleanup activities for complete transparency.
+
+📊 **Real-Time Stats**  
+- A responsive and modern dashboard shows live data on cleanup and optimization.
+
+⚡ **Safe and Reliable**  
+- Designed with performance and safety in mind, WP Clean Master ensures only redundant data is removed.
 
 == Installation ==
 
-1. Upload the `wp-clean-master` folder to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Access the cleanup dashboard under **Tools > WP Clean Master**.
-4. Use the cleanup options or enable scheduled cleanups.
-
-== Screenshots ==
-
-1. **Admin Dashboard** - Modern UI showing cleanup options with stats and buttons.
-2. **Scheduled Cleanup** - Configure daily or weekly automatic cleanup.
-3. **Cleanup Logs** - View logs of all cleanup actions.
+1. 🚀 **Install the Plugin**: Download and install **WP Clean Master** from the WordPress plugin repository or upload the ZIP file via the "Plugins" menu in WordPress.  
+2. 🔌 **Activate the Plugin**: Go to the "Plugins" menu and activate **WP Clean Master**.  
+3. 🛠️ **Start Cleaning**: Navigate to "WP Clean Master" in the WordPress admin panel to start optimizing your site!
 
 == Frequently Asked Questions ==
 
-= What does this plugin clean? =
-It removes drafts, trashed posts, unapproved/spam comments, orphaned media files, expired transients, and post revisions.
+❓ **Will this plugin delete important content?**  
+No, WP Clean Master only deletes unused and redundant data. Your essential content is completely safe.
 
-= How does scheduled cleanup work? =
-You can enable daily or weekly cleanups, and the plugin will run a background task to clean up your site automatically.
+❓ **Can I schedule automatic cleanups?**  
+Yes, you can schedule daily or weekly cleanups with just a few clicks.
 
-= Is this plugin safe to use? =
-Yes, the plugin follows WordPress coding standards and ensures safe deletion of unnecessary items.
+❓ **Is WP Clean Master suitable for large websites?**  
+Absolutely! WP Clean Master is built for performance and safety, making it ideal for both small and large WordPress sites.
 
-= Does the plugin show logs? =
-Yes, it keeps logs of all cleanup activities so you can track what has been deleted.
+❓ **Does it work with multisite installations?**  
+Yes, WP Clean Master is fully compatible with WordPress multisite.
+
+== Screenshots ==
+
+1. 🖥️ **Dashboard Overview**: A clean and modern interface with real-time stats.  
+2. 🧹 **Cleanup Options**: Easily select what to clean up.  
+3. 📋 **Activity Logs**: View detailed logs of all cleanup actions.  
+4. ⏰ **Scheduling**: Automate your cleanups daily or weekly.
 
 == Changelog ==
 
 = 1.0.0 =
-- Initial release with cleanup features:
-  - Clean drafts, trashed posts, and spam/unapproved comments.
-  - Remove orphaned media files.
-  - Optimize database by clearing transients and post revisions.
-  - Scheduled daily/weekly cleanups.
-  - Cleanup logs with stats.
+🎉 Initial release:  
+- 🧹 Clean drafts, orphaned media, spam comments, and optimize databases.  
+- ⏰ Scheduling and activity logs added.  
+- 📊 Responsive admin dashboard introduced.
 
 == Upgrade Notice ==
 
 = 1.0.0 =
-- First stable release of WP Clean Master.
+Welcome to **WP Clean Master**! Start cleaning and optimizing your WordPress site today.
 
-== License ==
-This plugin is licensed under the GPLv2 or later.
+== Credits ==
+
+Developed by [SH Sajal Chowdhury](https://easywptools.com) with inspiration from the best WordPress optimization tools.
+
+== Support ==
+
+📧 Need help? Visit [Support Page](https://easywptools.com/support) or open a ticket in the WordPress plugin repository.  
+
+== Like This Plugin? ==
+🌟 If you love **WP Clean Master**, please consider leaving a [5-star review](https://wordpress.org/plugins/wp-clean-master/#reviews) or [donating](https://buymeacoffee.com/shsajalchowdhury
+) to support continued development!

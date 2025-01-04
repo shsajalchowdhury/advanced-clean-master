@@ -4,6 +4,7 @@ Plugin Name: WP Clean Master
 Description: A plugin to clean and optimize your WordPress site by removing drafts, trashed posts, orphaned media, and more.
 Version: 1.0.0
 Author: SH Sajal Chowdhury
+Author URI: https://easywptools.com
 Text Domain: wp-clean-master
 License: GPLv2 or later  
 License URI: https://www.gnu.org/licenses/gpl-2.0.html  
