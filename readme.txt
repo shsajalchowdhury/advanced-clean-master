@@ -1,9 +1,9 @@
 === WP Clean Master ===
 Contributors: shsajalchowdhury
-Donate link: buymeacoffee.com/shsajalchowdhury
+Donate link: https://buymeacoffee.com/shsajalchowdhury
 Tags: cleanup, clean up, optimize database,optimize,postmeta 
 Requires at least: 5.0
-Tested up to: 6.4
+Tested up to: 6.7
 Requires PHP: 7.2
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -14,7 +14,7 @@ Remove unused drafts, spam comments, orphaned media, and optimize your database 
 
 == Description ==
 
-🌟 **WP Clean Master** is your all-in-one solution to keep your WordPress site clutter-free, fast, and optimized. Whether it's cleaning unused drafts, removing orphaned media files, or clearing expired transients, this plugin does it all with ease. Enjoy a clean, modern dashboard and schedule automated cleanups to ensure your website stays in top condition.
+🌟 **WP Clean Master** optimizes your WordPress site by cleaning drafts, orphaned media, expired transients, and more. Schedule cleanups easily
 
 💡 **Why Choose WP Clean Master?**  
 - 🧹 Clean unused drafts and trashed posts.  
