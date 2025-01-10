@@ -15,3 +15,4 @@ jobs:
           with:
           username: ${{ secrets.SVN_USERNAME }}
           password: ${{ secrets.SVN_PASSWORD }}
+          version: '1.0.0'
