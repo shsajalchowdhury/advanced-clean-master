@@ -45,10 +45,10 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
  🛠️ **Start Cleaning**: Navigate to \"Advanced Clean Master\" in the WordPress admin panel to start optimizing your site!
 
 == Frequently Asked Questions ==
-❓ =Will this plugin delete important content?=
+Will this plugin delete important content?
 No, Advanced Clean Masteronly deletes unused and redundant data. Your essential content is completely safe.
 
-❓ =**Can I schedule automatic cleanups?**= 
+Can I schedule automatic cleanups? 
 Yes, you can schedule daily or weekly cleanups with just a few clicks.
 
 ❓ =**Is Advanced Clean Master suitable for large websites?**=  
