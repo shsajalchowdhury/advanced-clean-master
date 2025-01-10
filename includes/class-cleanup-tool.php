@@ -1,19 +1,16 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-
-class WP_Clean_Master {
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+class ACMT_Cleanup {
 
     public function init() {
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-        add_action( 'wp_ajax_clean_action', array( $this, 'handle_ajax_cleanup' ) );
-        add_action( 'wp_ajax_toggle_scheduled_cleanup', array( $this, 'toggle_scheduled_cleanup' ) );
+        add_action( 'wp_ajax_acmt_clean_action', array( $this, 'handle_ajax_cleanup' ) );
+        add_action( 'wp_ajax_acmt_toggle_scheduled_cleanup', array( $this, 'toggle_scheduled_cleanup' ) );
 
         // Scheduled cleanup cron jobs
-        add_action( 'wp_clean_master_daily_event', array( $this, 'run_scheduled_cleanup' ) );
-        add_action( 'wp_clean_master_weekly_event', array( $this, 'run_scheduled_cleanup' ) );
+        add_action( 'acmt_daily_event', array( $this, 'run_scheduled_cleanup' ) );
+        add_action( 'acmt_weekly_event', array( $this, 'run_scheduled_cleanup' ) );
     }
 
     /**
@@ -21,10 +18,10 @@ class WP_Clean_Master {
      */
     public function add_admin_menu() {
         add_menu_page(
-            'WP Clean Master',
-            'WP Clean Master',
+            'Advanced Clean Master',
+            'Advanced Clean Master',
             'manage_options',
-            'wp-clean-master',
+            'acmt-clean-master',
             array( $this, 'cleanup_tool_page' ),
             'dashicons-trash',
             25
@@ -35,11 +32,11 @@ class WP_Clean_Master {
      * Enqueue Admin Assets (CSS & JS)
      */
     public function enqueue_assets() {
-        wp_enqueue_style( 'wp-clean-master-styles', WP_CLEAN_MASTER_URL . 'assets/css/styles.css', array(), '1.0.0' );
-        wp_enqueue_script( 'wp-clean-master-js', WP_CLEAN_MASTER_URL . 'assets/js/main.js', array( 'jquery' ), '1.0.0', true );
-        wp_localize_script( 'wp-clean-master-js', 'cleanupMasterAjax', array(
+        wp_enqueue_style( 'acmt-styles', ACMT_URL . 'assets/css/styles.css', array(), '1.0.0' );
+        wp_enqueue_script( 'acmt-js', ACMT_URL . 'assets/js/main.js', array( 'jquery' ), '1.0.0', true );
+        wp_localize_script( 'acmt-js', 'acmtCleanupAjax', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
-            'nonce'    => wp_create_nonce( 'cleanup_action_nonce' ),
+            'nonce'    => wp_create_nonce( 'acmt_cleanup_action_nonce' ),
         ) );
     }
 
@@ -48,19 +45,20 @@ class WP_Clean_Master {
      */
     public function cleanup_tool_page() {
         $stats = $this->get_cleanup_stats(); // Fetch stats
-        include WP_CLEAN_MASTER_PATH . 'views/cleanup-tool-dashboard.php'; // Include view file
+        include ACMT_PATH . 'views/cleanup-tool-dashboard.php'; // Include view file
     }
 
     /**
      * Handle AJAX Cleanup Actions
      */
     public function handle_ajax_cleanup() {
-        check_ajax_referer( 'cleanup_action_nonce', 'nonce' );
+    
+        check_ajax_referer( 'acmt_cleanup_action_nonce', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_send_json_error( array( 'message' => 'Unauthorized request.' ) );
             return;
         }
-
+    
         if ( isset( $_POST['cleanup_action'] ) ) {
             $action = sanitize_text_field( wp_unslash( $_POST['cleanup_action'] ) );
         } else {
@@ -96,7 +94,7 @@ class WP_Clean_Master {
                 wp_send_json_error( array( 'message' => 'Invalid action.' ) );
         }
 
-        $this->insert_cleanup_log( ucfirst( str_replace( '_', ' ', $action ) ), $count );
+        $this->insert_acmt_log( ucfirst( str_replace( '_', ' ', $action ) ), $count );
         wp_send_json_success( array( 'message' => "Cleaned {$count} items successfully." ) );
     }
 
@@ -104,7 +102,7 @@ class WP_Clean_Master {
      * Scheduled Cleanup Toggle
      */
     public function toggle_scheduled_cleanup() {
-        check_ajax_referer( 'cleanup_action_nonce', 'nonce' );
+        check_ajax_referer( 'acmt_cleanup_action_nonce', 'nonce' );
     
         // Validate and sanitize 'schedule'
         if ( isset( $_POST['schedule'] ) ) {
@@ -122,8 +120,8 @@ class WP_Clean_Master {
             return;
         }
     
-        $hook = ( $schedule === 'daily' ) ? 'wp_clean_master_daily_event' : 'wp_clean_master_weekly_event';
-        $option = "wp_clean_master_{$schedule}";
+        $hook = ( $schedule === 'daily' ) ? 'acmt_daily_event' : 'acmt_weekly_event';
+        $option = "acmt_clean_master_{$schedule}";
     
         if ( $enabled ) {
             update_option( $option, 1 );
@@ -242,10 +240,9 @@ class WP_Clean_Master {
         $used_as_featured = wp_cache_get( $used_as_featured_cache_key );
 
         if ( false === $used_as_featured ) {
-            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- meta_query is necessary for retrieving posts with specific metadata.
-            $used_as_featured = get_posts( array(
+            $used_as_featured = get_posts( array(  
                 'post_type'   => 'any',
-                'meta_query'  => array(
+                'meta_query'  => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- meta_query is necessary for retrieving posts with specific metadata.
                     array(
                         'key'     => '_thumbnail_id',
                         'value'   => $attachments,
@@ -374,9 +371,8 @@ class WP_Clean_Master {
     
         // Step 3: Find attachments used as featured images
         $used_as_featured = get_posts( array(
-            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- meta_query is necessary for retrieving posts with specific metadata.
             'post_type'   => 'any',
-            'meta_query'  => array(
+            'meta_query'  => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- meta_query is necessary for retrieving posts with specific metadata.
                 array(
                     'key'     => '_thumbnail_id',
                     'value'   => $attachments,
@@ -428,8 +424,8 @@ class WP_Clean_Master {
         global $wpdb;
 
         // Query to count expired transients
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        $count = $wpdb->get_var(
+        
+        $count = $wpdb->get_var( //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %d",
                 '_transient_timeout_%',
@@ -481,9 +477,9 @@ class WP_Clean_Master {
 
 
 
-    private function insert_cleanup_log( $action, $count ) {
+    private function insert_acmt_log( $action, $count ) {
         // Cache key to prevent duplicate inserts
-        $cache_key = 'insert_cleanup_log_' . md5( $action . $count );
+        $cache_key = 'insert_acmt_log' . md5( $action . $count );
 
         // Check if this log entry already exists in cache
         if ( wp_cache_get( $cache_key ) ) {
@@ -498,9 +494,9 @@ class WP_Clean_Master {
         $cleaned_on = current_time( 'mysql' );
 
         // Insert the log into the database
-        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $wpdb->insert(
-            $wpdb->prefix . 'clean_master_logs',
+        
+            $wpdb->insert( //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $wpdb->prefix . 'acmt_logs',
             array(
                 'cleanup_type'  => $cleanup_type,
                 'cleaned_count' => $cleaned_count,
@@ -527,11 +523,11 @@ class WP_Clean_Master {
         global $wpdb;
 
         // Step 1: Fetch total space saved from cleanup logs
-        $cache_key = 'wp_clean_master_total_space_saved';
+        $cache_key = 'acmt_space_saved';
         $total_space_saved = wp_cache_get( $cache_key );
 
         if ( false === $total_space_saved ) {
-            $total_space_saved = (int) get_option( 'wp_clean_master_total_space_saved', 0 );
+            $total_space_saved = (int) get_option( 'acmt_space_saved', 0 );
 
             // Step 2: Calculate orphaned media space saved
             $orphaned_media_space = 0;
@@ -556,7 +552,7 @@ class WP_Clean_Master {
             $total_space_saved += $orphaned_media_space;
 
             // Step 3: Save the updated value to the database and cache
-            update_option( 'wp_clean_master_total_space_saved', $total_space_saved );
+            update_option( 'acmt_space_saved', $total_space_saved );
             wp_cache_set( $cache_key, $total_space_saved, '', 3600 ); // Cache for 1 hour
         }
 
