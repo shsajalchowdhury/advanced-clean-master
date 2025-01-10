@@ -1,6 +1,6 @@
-      - name: Deploy to WordPress.org
-        uses: 10up/action-wordpress-plugin-deploy@v1.4.0
+     name: Deploy to WordPress.org
+        uses: sultann/wordpress-plugin-deploy@master
         with:
-          svn_username: ${{ secrets.SVN_USERNAME }}
-          svn_password: ${{ secrets.SVN_PASSWORD }}
-          plugin_slug: advanced-clean-master
+          username: ${{ secrets.SVN_USERNAME }}
+          password: ${{ secrets.SVN_PASSWORD }}
+          slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
