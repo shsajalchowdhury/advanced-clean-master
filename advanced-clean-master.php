@@ -2,7 +2,7 @@
 /*
 Plugin Name: Advanced Clean Master
 Description: A plugin to clean and optimize your WordPress site by removing drafts, trashed posts, orphaned media, and more.
-Version: 1.0.2
+Version: 1.0.3
 Author: SH Sajal Chowdhury
 Author URI: https://easywptools.com
 Requires at least: 5.4

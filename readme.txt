@@ -3,7 +3,7 @@ Contributors: shsajalchowdhury
 Tags: cleanup, clean up, optimize database,optimize,postmeta
 Donate link: https://ko-fi.com/shsajalchowdhury
 Tested up to: 6.7
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,9 +63,10 @@ Yes, Advanced Clean Masteris fully compatible with WordPress multisite.
 3. Activity Logs*: View detailed logs of all cleanup actions.
 
 == Changelog ==
-== 1.0.2
+==1.0.3==
+Fix some known issue
+== 1.0.2 ==
 Readme Update
-
 == 1.0.1 ==
 Fix Minor Issue
 = 1.0.0 =
@@ -75,6 +76,8 @@ Fix Minor Issue
 - 📊 Responsive admin dashboard introduced.
 
 == Upgrade Notice ==
+=1.0.3
+Fix some known issue
 =1.0.2=
 Update Readme
 = 1.0.1 = 
