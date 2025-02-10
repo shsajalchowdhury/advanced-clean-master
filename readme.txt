@@ -3,7 +3,7 @@ Contributors: shsajalchowdhury
 Tags: cleanup, clean up, optimize database,optimize,postmeta
 Donate link: https://ko-fi.com/shsajalchowdhury
 Tested up to: 6.7
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,16 +45,16 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
  🛠️ **Start Cleaning**: Navigate to \"Advanced Clean Master\" in the WordPress admin panel to start optimizing your site!
 
 == Frequently Asked Questions ==
-= Will this plugin delete important content?=
+= Will this plugin delete important content? =
 No, Advanced Clean Masteronly deletes unused and redundant data. Your essential content is completely safe.
 
 = Can I schedule automatic cleanups? =
 Yes, you can schedule daily or weekly cleanups with just a few clicks.
 
-= Is Advanced Clean Master suitable for large websites?=  
+= Is Advanced Clean Master suitable for large websites? =  
 Absolutely! Advanced Clean Masteris built for performance and safety, making it ideal for both small and large WordPress sites.
 
-=Does it work with multisite installations?=  
+= Does it work with multisite installations? =  
 Yes, Advanced Clean Masteris fully compatible with WordPress multisite.
 
 == Screenshots ==
@@ -63,11 +63,13 @@ Yes, Advanced Clean Masteris fully compatible with WordPress multisite.
 3. Activity Logs*: View detailed logs of all cleanup actions.
 
 == Changelog ==
-==1.0.3==
+= 1.0.4 =
+Fix Clean Transient Function 
+= 1.0.3 =
 Fix some known issue
-== 1.0.2 ==
+= 1.0.2 =
 Readme Update
-== 1.0.1 ==
+= 1.0.1 =
 Fix Minor Issue
 = 1.0.0 =
 🎉 Initial release:  
@@ -76,9 +78,11 @@ Fix Minor Issue
 - 📊 Responsive admin dashboard introduced.
 
 == Upgrade Notice ==
-=1.0.3
+= 1.0.4 =
+Fix Clean Transient Function
+= 1.0.3 =
 Fix some known issue
-=1.0.2=
+= 1.0.2 =
 Update Readme
 = 1.0.1 = 
 Fix minor issue

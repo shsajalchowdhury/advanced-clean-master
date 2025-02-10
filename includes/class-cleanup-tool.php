@@ -408,9 +408,9 @@ class ACMT_Cleanup {
     
 
 
- /**
- * Get Count of Expired Transients
- */
+    /**
+     * Get Count of Expired Transients
+     */
     private function get_transient_count() {
         // Define a cache key
         $cache_key = 'expired_transient_count';
@@ -424,54 +424,64 @@ class ACMT_Cleanup {
         global $wpdb;
 
         // Query to count expired transients
-        
-        $count = $wpdb->get_var( //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $wpdb->prepare(
-                "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %d",
-                '_transient_timeout_%',
-                time()
-            )
-        );
+        $count = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) 
+            FROM {$wpdb->options} 
+            WHERE option_name LIKE %s 
+            AND option_value < %d",
+            $wpdb->esc_like('_transient_timeout_') . '%',
+            time()
+        ) );
 
         // Cache the count for 1 hour (3600 seconds)
+        $count = absint($count);
         wp_cache_set( $cache_key, $count, '', 3600 );
 
-        return $count ? (int) $count : 0;
+        return $count;
     }
 
 
     /**
- * Clean Expired Transients
- */
+     * Clean Expired Transients
+    */
     private function clean_transients() {
         global $wpdb;
 
-        // Cache keys for results
-        $cache_key_timeouts = 'deleted_transient_timeouts';
-        $cache_key_values = 'deleted_transient_values';
+        // First, get the names of expired transients
+        $expired_transients = $wpdb->get_col(
+            $wpdb->prepare(
+                "SELECT REPLACE(option_name, '_transient_timeout_', '_transient_') 
+                FROM {$wpdb->options} 
+                WHERE option_name LIKE %s 
+                AND option_value < %d",
+                $wpdb->esc_like('_transient_timeout_') . '%',
+                time()
+            )
+        );
 
-        // Initialize counters
-        $deleted_timeouts = wp_cache_get( $cache_key_timeouts );
-        $deleted_values = wp_cache_get( $cache_key_values );
-
-        if ( false === $deleted_timeouts ) {
-            // Use wp_delete_expired_transients() instead of direct query
-            $deleted_timeouts = wp_delete_expired_transients();
-
-            // Cache the result
-            wp_cache_set( $cache_key_timeouts, $deleted_timeouts, '', 3600 ); // Cache for 1 hour
+        if (empty($expired_transients)) {
+            return 0;
         }
 
-        if ( false === $deleted_values ) {
-            // Use wp_delete_expired_transients() instead of direct query
-            $deleted_values = wp_delete_expired_transients();
+        // Delete the transient timeout entries
+        $deleted_timeouts = $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} 
+                WHERE option_name LIKE %s 
+                AND option_value < %d",
+                $wpdb->esc_like('_transient_timeout_') . '%',
+                time()
+            )
+        );
 
-            // Cache the result
-            wp_cache_set( $cache_key_values, $deleted_values, '', 3600 ); // Cache for 1 hour
-        }
+        // Delete the corresponding transient value entries
+        $in_clause = "'" . implode("','", array_map('esc_sql', $expired_transients)) . "'";
+        $deleted_values = $wpdb->query(
+            "DELETE FROM {$wpdb->options} 
+            WHERE option_name IN ($in_clause)"
+        );
 
-        // Return the total number of deleted transients
-        return (int) ( $deleted_timeouts + $deleted_values );
+        return absint($deleted_timeouts);
     }
 
 
