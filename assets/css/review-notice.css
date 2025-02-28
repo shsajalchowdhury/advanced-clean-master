@@ -1,0 +1,67 @@
+.acmt-review-notice {
+    padding: 20px !important;
+    border-left-color: #2271b1 !important;
+}
+
+.acmt-review-notice-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.acmt-plugin-icon {
+    width: 64px;
+    height: 64px;
+}
+
+.acmt-review-text {
+    flex: 1;
+}
+
+.acmt-review-text h3 {
+    margin: 0 0 10px;
+    font-size: 1.2em;
+    color: #1d2327;
+}
+
+.acmt-review-text p {
+    margin: 0 0 15px;
+    font-size: 14px;
+    color: #50575e;
+}
+
+.acmt-review-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.acmt-review-actions .button-primary {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: none;
+    padding: 4px 12px;
+}
+
+.acmt-review-actions .button-secondary {
+    color: #2271b1;
+    border-color: #2271b1;
+    background: #f6f7f7;
+    padding: 4px 12px;
+}
+
+.acmt-review-actions .button-link {
+    color: #646970;
+    text-decoration: underline;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
+}
+
+.acmt-review-actions .button-link:hover {
+    color: #135e96;
+}

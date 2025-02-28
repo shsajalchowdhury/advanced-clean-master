@@ -21,13 +21,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'ACMT_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ACMT_URL', plugin_dir_url( __FILE__ ) );
 
-// Include the main class
+// Include required files
 require_once ACMT_PATH . 'includes/class-cleanup-tool.php';
+require_once ACMT_PATH . 'includes/class-review-notice.php';
 
 // Initialize the plugin
 function acmt_init() {
+    // Initialize main plugin
     $plugin = new ACMT_Cleanup();
     $plugin->init();
+
+    // Initialize review notice
+    if (class_exists('ACMT_Review_Notice')) {
+        new ACMT_Review_Notice();
+    }
+
+    // Enqueue review notice styles
+    add_action('admin_enqueue_scripts', 'acmt_enqueue_admin_styles');
+}
+
+function acmt_enqueue_admin_styles() {
+    wp_enqueue_style('acmt-review-notice', ACMT_URL . 'assets/css/review-notice.css', array(), '1.0.0');
 }
 add_action( 'plugins_loaded', 'acmt_init' );
 

@@ -136,7 +136,7 @@
                 <strong>Enable Daily Cleanup</strong>
             </label>
             <label class="toggle-switch">
-                <input type="checkbox" id="daily-cleanup" <?php checked( get_option( 'acmt_daily_event' ), '1' ); ?>>
+                <input type="checkbox" id="daily-cleanup" <?php checked( get_option( 'acmt_clean_master_daily' ), '1' ); ?>>
                 <span class="slider"></span>
             </label>
             </div>
@@ -150,7 +150,7 @@
                 <strong>Enable Weekly Cleanup</strong>
             </label>
             <label class="toggle-switch">
-                <input type="checkbox" id="weekly-cleanup" <?php checked( get_option( 'acmt_weekly_event' ), '1' ); ?>>
+                <input type="checkbox" id="weekly-cleanup" <?php checked( get_option( 'acmt_clean_master_weekly' ), '1' ); ?>>
                 <span class="slider"></span>
             </label>
             </div>

@@ -102,38 +102,66 @@ class ACMT_Cleanup {
      * Scheduled Cleanup Toggle
      */
     public function toggle_scheduled_cleanup() {
-        check_ajax_referer( 'acmt_cleanup_action_nonce', 'nonce' );
-    
+        check_ajax_referer('acmt_cleanup_action_nonce', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => 'Unauthorized request.'));
+            return;
+        }
+
         // Validate and sanitize 'schedule'
-        if ( isset( $_POST['schedule'] ) ) {
-            $schedule = sanitize_text_field( wp_unslash( $_POST['schedule'] ) );
-        } else {
-            wp_send_json_error( array( 'message' => 'Invalid request. Schedule not specified.' ) );
-            return;
-        }
-    
-        // Validate and sanitize 'enabled'
-        if ( isset( $_POST['enabled'] ) ) {
-            $enabled = filter_var( wp_unslash( $_POST['enabled'] ), FILTER_VALIDATE_BOOLEAN );
-        } else {
-            wp_send_json_error( array( 'message' => 'Invalid request. Enabled status not specified.' ) );
-            return;
-        }
-    
-        $hook = ( $schedule === 'daily' ) ? 'acmt_daily_event' : 'acmt_weekly_event';
-        $option = "acmt_clean_master_{$schedule}";
-    
-        if ( $enabled ) {
-            update_option( $option, 1 );
-            if ( ! wp_next_scheduled( $hook ) ) {
-                wp_schedule_event( time(), $schedule, $hook );
+        if (isset($_POST['schedule'])) {
+            $schedule = sanitize_text_field(wp_unslash($_POST['schedule']));
+            if (!in_array($schedule, array('daily', 'weekly'))) {
+                wp_send_json_error(array('message' => 'Invalid schedule type.'));
+                return;
             }
         } else {
-            update_option( $option, 0 );
-            wp_clear_scheduled_hook( $hook );
+            wp_send_json_error(array('message' => 'Schedule not specified.'));
+            return;
         }
-    
-        wp_send_json_success( array( 'message' => ucfirst( $schedule ) . ' schedule updated successfully.' ) );
+
+        // Validate and sanitize 'enabled'
+        if (isset($_POST['enabled'])) {
+            $enabled = filter_var(wp_unslash($_POST['enabled']), FILTER_VALIDATE_BOOLEAN);
+        } else {
+            wp_send_json_error(array('message' => 'Enabled status not specified.'));
+            return;
+        }
+
+        $hook = ($schedule === 'daily') ? 'acmt_daily_event' : 'acmt_weekly_event';
+        $option = "acmt_clean_master_{$schedule}";
+
+        if ($enabled) {
+            // Clear any existing schedule first to prevent duplicates
+            wp_clear_scheduled_hook($hook);
+            
+            // Schedule the new event
+            $start_time = strtotime('tomorrow 00:00:00'); // Start at midnight
+            if ($schedule === 'weekly') {
+                $start_time = strtotime('next monday 00:00:00'); // Start next Monday at midnight
+            }
+            
+            $scheduled = wp_schedule_event($start_time, $schedule, $hook);
+            
+            if ($scheduled === false) {
+                wp_send_json_error(array('message' => 'Failed to schedule cleanup event.'));
+                return;
+            }
+            
+            update_option($option, 1);
+            wp_send_json_success(array(
+                'message' => sprintf(
+                    '%s cleanup scheduled successfully. First cleanup will run at %s.', 
+                    ucfirst($schedule),
+                    wp_date('Y-m-d H:i:s', $start_time)
+                )
+            ));
+        } else {
+            wp_clear_scheduled_hook($hook);
+            update_option($option, 0);
+            wp_send_json_success(array('message' => ucfirst($schedule) . ' cleanup disabled successfully.'));
+        }
     }
     
 
@@ -573,14 +601,29 @@ class ACMT_Cleanup {
      * Run Scheduled Cleanup
      */
     public function run_scheduled_cleanup() {
-        // Perform cleanup actions
-        $this->clean_drafts();
-        $this->clean_trashed_posts();
-        $this->clean_unapproved_comments();
-        $this->clean_orphaned_media();
-        $this->clean_post_revisions();
-        $this->clean_transients();
-        $this->clean_spam_comments();
+        // Array of cleanup actions and their methods
+        $cleanup_actions = array(
+            'Drafts' => 'clean_drafts',
+            'Trashed Posts' => 'clean_trashed_posts',
+            'Unapproved Comments' => 'clean_unapproved_comments',
+            'Orphaned Media' => 'clean_orphaned_media',
+            'Post Revisions' => 'clean_post_revisions',
+            'Transients' => 'clean_transients',
+            'Spam Comments' => 'clean_spam_comments'
+        );
+
+        // Run each cleanup action and log the results
+        foreach ($cleanup_actions as $action_name => $method) {
+            if (method_exists($this, $method)) {
+                $count = $this->$method();
+                if ($count > 0) {
+                    $this->insert_acmt_log($action_name, $count);
+                }
+            }
+        }
+
+        // Update last run time
+        update_option('acmt_last_cleanup_run', current_time('timestamp'));
     }
 
 }
