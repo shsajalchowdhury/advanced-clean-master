@@ -62,9 +62,13 @@ class ACMT_Review_Notice {
             <div class="acmt-review-notice-content">
                 <img src="<?php echo esc_url($plugin_icon); ?>" alt="<?php echo esc_attr($this->plugin_name); ?>" class="acmt-plugin-icon">
                 <div class="acmt-review-text">
-                    <h3><?php echo esc_html__('Enjoying ' . $this->plugin_name . '?', 'advanced-clean-master'); ?></h3>
+                    <h3><?php
+                        // translators: %s is the plugin name
+                        printf(esc_html__('Enjoying %s?', 'advanced-clean-master'), esc_html($this->plugin_name));
+                    ?></h3>
                     <p>
                         <?php
+                        // translators: %s is the plugin name
                         printf(
                             esc_html__('Thank you for using %s! If you find it helpful, please take a moment to rate it on WordPress.org. Your feedback helps us improve and grow!', 'advanced-clean-master'),
                             '<strong>' . esc_html($this->plugin_name) . '</strong>'
@@ -91,7 +95,7 @@ class ACMT_Review_Notice {
     public function dismiss_review_notice() {
         check_ajax_referer('acmt_review_nonce', 'nonce');
 
-        $type = isset($_POST['type']) ? sanitize_text_field($_POST['type']) : '';
+        $type = isset($_POST['type']) ? sanitize_text_field(wp_unslash($_POST['type'])) : '';
 
         if ($type === 'remind') {
             update_option('acmt_reminder_date', current_time('timestamp'));

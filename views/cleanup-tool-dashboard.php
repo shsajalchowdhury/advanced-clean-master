@@ -124,6 +124,33 @@
                 <?php echo ( intval( $stats['spam_comments'] ) === 0 ) ? 'No Items' : 'Clean Now'; ?>
             </button>
         </div>
+
+        <!-- Optimize Database -->
+        <div class="feature">
+            <div class="icon">
+                <img src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/icons/database.svg' ); ?>" alt="Optimize Database">
+            </div>
+            <?php if ( isset( $stats['db_optimized'] ) && $stats['db_optimized'] ) : ?>
+                <h2>Optimize Database</h2>
+            <?php else : ?>
+                <h2>Optimize Database (<?php echo intval( $stats['database_tables'] ); ?>)</h2>
+            <?php endif; ?>
+            <p>Optimize database tables to improve performance and reduce overhead.</p>
+            <?php if ( isset( $stats['db_optimized'] ) && $stats['db_optimized'] ) : ?>
+                <button class="clean-now-btn optimized" disabled>
+                    <?php esc_html_e( 'Recently Optimized', 'advanced-clean-master' ); ?>
+                </button>
+                <small class="optimization-note"><?php esc_html_e( 'Database was optimized within the last 24 hours', 'advanced-clean-master' ); ?></small>
+            <?php else : ?>
+                <button class="clean-now-btn" 
+                        data-action="optimize_database" 
+                        data-nonce="<?php echo esc_attr( wp_create_nonce( 'acmt_cleanup_action_nonce' ) ); ?>" 
+                        data-count="<?php echo intval( $stats['database_tables'] ); ?>" 
+                        <?php echo ( intval( $stats['database_tables'] ) === 0 ) ? 'disabled' : ''; ?>>
+                    <?php echo ( intval( $stats['database_tables'] ) === 0 ) ? 'No Tables' : 'Optimize Now'; ?>
+                </button>
+            <?php endif; ?>
+        </div>
     </div>
 
     <div class="scheduled-cleanup">

@@ -94,6 +94,20 @@ button.clean-now-btn[disabled] {
     cursor: not-allowed;
 }
 
+button.clean-now-btn.optimized {
+    background-color: #3498db;
+    color: #fff;
+    cursor: default;
+}
+
+.optimization-note {
+    display: block;
+    margin-top: 8px;
+    color: #666;
+    font-style: italic;
+    font-size: 0.85em;
+}
+
 /* Spinner for Loading */
 .spinner {
     border: 2px solid #f3f3f3;

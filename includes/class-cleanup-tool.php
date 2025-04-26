@@ -90,6 +90,9 @@ class ACMT_Cleanup {
             case 'clean_spam_comments':
                 $count = $this->clean_spam_comments();
                 break;
+            case 'optimize_database':
+                $count = $this->optimize_database();
+                break;
             default:
                 wp_send_json_error( array( 'message' => 'Invalid action.' ) );
         }
@@ -169,6 +172,15 @@ class ACMT_Cleanup {
     * Get Cleanup Stats
     */
     private function get_cleanup_stats() {
+        global $wpdb;
+        
+        // Get count of database tables
+        $tables_count = $wpdb->get_var("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE '{$wpdb->prefix}%'");
+        
+        // Check if database was recently optimized (within last 24 hours)
+        $last_optimization = get_option( 'acmt_last_db_optimization', 0 );
+        $db_recently_optimized = ( time() - $last_optimization ) < DAY_IN_SECONDS;
+        
         return array(
         'drafts'              => count( get_posts( array( 'post_status' => 'draft', 'numberposts' => -1 ) ) ),
         'trashed'             => count( get_posts( array( 'post_status' => 'trash', 'numberposts' => -1 ) ) ),
@@ -177,6 +189,8 @@ class ACMT_Cleanup {
         'post_revisions'      => count( get_posts( array( 'post_type' => 'revision', 'numberposts' => -1 ) ) ),
         'transients'          => $this->get_transient_count(),
         'spam_comments'       => wp_count_comments()->spam,
+        'database_tables'     => absint($tables_count),
+        'db_optimized'        => $db_recently_optimized,
     );
     }
     private function clean_drafts() {
@@ -609,7 +623,8 @@ class ACMT_Cleanup {
             'Orphaned Media' => 'clean_orphaned_media',
             'Post Revisions' => 'clean_post_revisions',
             'Transients' => 'clean_transients',
-            'Spam Comments' => 'clean_spam_comments'
+            'Spam Comments' => 'clean_spam_comments',
+            'Database Optimization' => 'optimize_database'
         );
 
         // Run each cleanup action and log the results
@@ -626,4 +641,42 @@ class ACMT_Cleanup {
         update_option('acmt_last_cleanup_run', current_time('timestamp'));
     }
 
+    /**
+     * Optimize Database Tables
+     * 
+     * @return int Number of tables optimized
+     */
+    private function optimize_database() {
+        global $wpdb;
+        
+        // Get all tables with the WordPress prefix
+        $tables = $wpdb->get_results( "SHOW TABLES LIKE '{$wpdb->prefix}%'" );
+        
+        if ( empty( $tables ) ) {
+            return 0;
+        }
+        
+        $optimized_count = 0;
+        
+        foreach ( $tables as $table ) {
+            $table_name = reset( $table );
+            
+            // Skip the logs table to avoid optimization during active use
+            if ( $table_name === $wpdb->prefix . 'acmt_logs' ) {
+                continue;
+            }
+            
+            // Run the optimize table query
+            $result = $wpdb->query( "OPTIMIZE TABLE {$table_name}" );
+            
+            if ( false !== $result ) {
+                $optimized_count++;
+            }
+        }
+        
+        // Store the last optimization time to prevent immediate re-optimization
+        update_option( 'acmt_last_db_optimization', current_time( 'timestamp' ) );
+        
+        return $optimized_count;
+    }
 }
