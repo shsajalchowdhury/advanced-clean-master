@@ -4,7 +4,7 @@ Tags: cleanup, clean up, optimize database,optimize,postmeta
 Donate link: https://ko-fi.com/shsajalchowdhury
 Requires at least: 5.4
 Tested up to: 6.8
-Stable tag: 1.0.6
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,7 +28,7 @@ This all-in-one WordPress cleaner and optimizer helps you:
 **Advanced Clean Master** provides a comprehensive set of cleaning tools:
 
 💡 **Why Choose Advanced Clean Master?**  
-- 🧹 **Clean Post Data**: Remove unused drafts, trashed posts, and unnecessary revisions
+- 🧹 **Clean Post Data**: Remove unused drafts, auto-drafts, trashed posts, and unnecessary revisions
 - 🗑️ **Comment Cleanup**: Delete spam and unapproved comments that clutter your database
 - 🖼️ **Media Optimization**: Remove orphaned media files not linked to any content
 - 🔄 **Transient Cleanup**: Clear expired transients that bloat your options table
@@ -49,6 +49,7 @@ Whether you run a small blog, business website, WooCommerce store, or large cont
 
 * **Post Cleanup**
   - Remove unused draft posts that clutter your wp_posts table
+  - Clean auto-saved drafts created by WordPress automatically
   - Delete trashed posts permanently to free up database space
   - Clean up post revisions to streamline your database
 
@@ -129,7 +130,7 @@ Whether you run a small blog, business website, WooCommerce store, or large cont
 == Frequently Asked Questions ==
 
 = Will this plugin delete important content? =
-No, Advanced Clean Master only deletes unused and redundant data. The plugin is designed with safety in mind and only removes content that is genuinely no longer needed, such as trashed posts, spam comments, and orphaned media files not linked to any content. Your essential content remains completely safe.
+No, Advanced Clean Master only deletes unused and redundant data. The plugin is designed with safety in mind and only removes content that is genuinely no longer needed, such as trashed posts, spam comments, auto-saved drafts, and orphaned media files not linked to any content. Your essential content remains completely safe.
 
 = Can I schedule automatic cleanups? =
 Yes! Advanced Clean Master offers both daily and weekly scheduling options. Simply visit the plugin dashboard and toggle the scheduling switches to enable automatic cleanups. This "set it and forget it" approach ensures your site stays optimized without manual intervention.
@@ -142,6 +143,9 @@ Yes, by removing unnecessary data and optimizing database tables, Advanced Clean
 
 = How much space can I expect to save? =
 The amount of space saved depends on your site's specific situation. Sites with a long history, many revisions, or lots of media uploads typically see the most dramatic improvements. The plugin dashboard shows you exactly how much space you've saved through cleanup operations.
+
+= What are auto-drafts and is it safe to delete them? =
+Auto-drafts are automatically saved versions of posts that WordPress creates while you're editing content. These are different from regular drafts and are created every few seconds as a backup. Over time, these can accumulate and take up database space. It's completely safe to delete auto-drafts as they're only temporary backups and not your actual content.
 
 = Does it work with WordPress multisite? =
 Yes, Advanced Clean Master is fully compatible with WordPress multisite installations. It will clean and optimize each site in your network individually.
@@ -164,6 +168,11 @@ Yes, Advanced Clean Masteris fully compatible with WordPress multisite.
 3. Activity Logs*: View detailed logs of all cleanup actions.
 
 == Changelog ==
+= 1.0.8 =
+* New - Added Auto-Drafts Cleanup feature to remove automatically saved drafts
+* Enhancement - Improved post cleanup options with better categorization
+* Enhancement - Updated dashboard UI to accommodate new cleanup feature
+
 = 1.0.6 =
 * New - Added Database Optimization feature to improve database performance
 * Enhancement - Improved UI with status indicators for optimized database
@@ -185,6 +194,10 @@ Yes, Advanced Clean Masteris fully compatible with WordPress multisite.
 - 📊 Responsive admin dashboard introduced.
 
 == Upgrade Notice ==
+= 1.0.8 =
+* New - Added Auto-Drafts Cleanup feature to help clean automatically saved drafts that WordPress creates
+* Enhancement - Better post cleanup categorization and improved dashboard layout
+
 = 1.0.6 =
 * New - Added Database Optimization feature to improve database performance and reduce overhead
 * Enhancement - Better UI with status indicators for recently optimized databases

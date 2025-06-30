@@ -32,8 +32,8 @@ class ACMT_Cleanup {
      * Enqueue Admin Assets (CSS & JS)
      */
     public function enqueue_assets() {
-        wp_enqueue_style( 'acmt-styles', ACMT_URL . 'assets/css/styles.css', array(), '1.0.0' );
-        wp_enqueue_script( 'acmt-js', ACMT_URL . 'assets/js/main.js', array( 'jquery' ), '1.0.0', true );
+        wp_enqueue_style( 'acmt-styles', ACMT_URL . 'assets/css/styles.css', array(), '1.0.8' );
+        wp_enqueue_script( 'acmt-js', ACMT_URL . 'assets/js/main.js', array( 'jquery' ), '1.0.8', true );
         wp_localize_script( 'acmt-js', 'acmtCleanupAjax', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'nonce'    => wp_create_nonce( 'acmt_cleanup_action_nonce' ),
@@ -71,6 +71,9 @@ class ACMT_Cleanup {
         switch ( $action ) {
             case 'clean_drafts':
                 $count = $this->clean_drafts();
+                break;
+            case 'clean_auto_drafts':
+                $count = $this->clean_auto_drafts();
                 break;
             case 'clean_trashed_posts':
                 $count = $this->clean_trashed_posts();
@@ -183,6 +186,7 @@ class ACMT_Cleanup {
         
         return array(
         'drafts'              => count( get_posts( array( 'post_status' => 'draft', 'numberposts' => -1 ) ) ),
+        'auto_drafts'         => count( get_posts( array( 'post_status' => 'auto-draft', 'numberposts' => -1 ) ) ),
         'trashed'             => count( get_posts( array( 'post_status' => 'trash', 'numberposts' => -1 ) ) ),
         'unapproved_comments' => wp_count_comments()->moderated,
         'orphaned_media'      => $this->get_orphaned_media_count(),
@@ -195,6 +199,14 @@ class ACMT_Cleanup {
     }
     private function clean_drafts() {
         return $this->delete_posts_by_status( 'draft' );
+    }
+
+    /**
+     * Clean Auto-Drafts
+     * Removes auto-saved drafts that WordPress creates automatically
+     */
+    private function clean_auto_drafts() {
+        return $this->delete_posts_by_status( 'auto-draft' );
     }
 
     private function clean_trashed_posts() {
@@ -618,6 +630,7 @@ class ACMT_Cleanup {
         // Array of cleanup actions and their methods
         $cleanup_actions = array(
             'Drafts' => 'clean_drafts',
+            'Auto Drafts' => 'clean_auto_drafts',
             'Trashed Posts' => 'clean_trashed_posts',
             'Unapproved Comments' => 'clean_unapproved_comments',
             'Orphaned Media' => 'clean_orphaned_media',

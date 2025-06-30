@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Advanced Clean Master
-Description: A plugin to clean and optimize your WordPress site by removing drafts, trashed posts, orphaned media, and more.
-Version: 1.0.6
+Plugin Name: Advanced Clean Master - Complete Site Cleanup & Database Optimizer
+Description: A plugin to clean and optimize your WordPress site by removing drafts, auto-drafts, trashed posts, orphaned media, and more.
+Version: 1.0.8
 Author: SH Sajal Chowdhury
 Author URI: https://easywptools.com
 Requires at least: 5.4
@@ -35,15 +35,13 @@ function acmt_init() {
     if (class_exists('ACMT_Review_Notice')) {
         new ACMT_Review_Notice();
     }
-
-    // Enqueue review notice styles
-    add_action('admin_enqueue_scripts', 'acmt_enqueue_admin_styles');
 }
 
 function acmt_enqueue_admin_styles() {
-    wp_enqueue_style('acmt-review-notice', ACMT_URL . 'assets/css/review-notice.css', array(), '1.0.0');
+    wp_enqueue_style('acmt-review-notice', ACMT_URL . 'assets/css/review-notice.css', array(), '1.0.8');
 }
 add_action( 'plugins_loaded', 'acmt_init' );
+add_action('admin_enqueue_scripts', 'acmt_enqueue_admin_styles');
 
 // Activation Hook - Create Logs Table
 register_activation_hook( __FILE__, 'acmt_activate' );

@@ -21,7 +21,7 @@ class ACMT_Review_Notice {
     }
 
     public function enqueue_notice_script() {
-        wp_enqueue_script('acmt-review-notice', plugin_dir_url(dirname(__FILE__)) . 'assets/js/review-notice.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_script('acmt-review-notice', plugin_dir_url(dirname(__FILE__)) . 'assets/js/review-notice.js', array('jquery'), '1.0.8', true);
         wp_localize_script('acmt-review-notice', 'acmtReview', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('acmt_review_nonce')
@@ -106,6 +106,3 @@ class ACMT_Review_Notice {
         wp_send_json_success();
     }
 }
-
-// Initialize the review notice
-new ACMT_Review_Notice();

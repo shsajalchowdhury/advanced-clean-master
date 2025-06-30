@@ -29,6 +29,22 @@
             </button>
         </div>
 
+        <!-- Clean Auto-Drafts -->
+        <div class="feature">
+            <div class="icon">
+                <img src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__ ) ) . 'assets/icons/auto-drafts.svg' ); ?>" alt="Clean Auto-Drafts">
+            </div>
+            <h2>Clean Auto-Drafts (<?php echo intval( $stats['auto_drafts'] ); ?>)</h2>
+            <p>Remove automatically saved drafts that are no longer needed</p>
+            <button class="clean-now-btn" 
+                    data-action="clean_auto_drafts" 
+                    data-nonce="<?php echo esc_attr( wp_create_nonce( 'acmt_cleanup_action_nonce' ) ); ?>" 
+                    data-count="<?php echo intval( $stats['auto_drafts'] ); ?>" 
+                    <?php echo ( intval( $stats['auto_drafts'] ) === 0 ) ? 'disabled title="No auto-drafts to clean."' : ''; ?>>
+                <?php echo ( intval( $stats['auto_drafts'] ) === 0 ) ? 'No Items' : 'Clean Now'; ?>
+            </button>
+        </div>
+
         <!-- Clean Trashed Posts -->
         <div class="feature">
             <div class="icon">
